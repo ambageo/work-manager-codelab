@@ -62,8 +62,8 @@ class BlurViewModel(private val bluromaticRepository: BluromaticRepository) : Vi
     }
 }
 
-sealed interface BlurUiState {
-    object Default : BlurUiState
-    object Loading : BlurUiState
-    data class Complete(val outputUri: String) : BlurUiState
+sealed class BlurUiState {
+    object Default : BlurUiState()
+    object Loading : BlurUiState()
+    data class Complete(val outputUri: String) : BlurUiState()
 }
