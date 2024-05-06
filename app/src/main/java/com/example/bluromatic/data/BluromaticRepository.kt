@@ -24,3 +24,5 @@ interface BluromaticRepository {
     fun applyBlur(blurLevel: Int)
     fun cancelWork()
 }
+
+

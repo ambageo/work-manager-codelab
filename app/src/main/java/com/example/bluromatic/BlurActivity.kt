@@ -28,7 +28,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.bluromatic.ui.BluromaticScreen
 import com.example.bluromatic.ui.theme.BluromaticTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BlurActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()

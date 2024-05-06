@@ -67,7 +67,8 @@ import com.example.bluromatic.data.BlurAmount
 import com.example.bluromatic.ui.theme.BluromaticTheme
 
 @Composable
-fun BluromaticScreen(blurViewModel: BlurViewModel = viewModel(factory = BlurViewModel.Factory)) {
+fun BluromaticScreen() {
+    val blurViewModel: BlurViewModel = viewModel()
     val uiState by blurViewModel.blurUiState.collectAsStateWithLifecycle()
     val layoutDirection = LocalLayoutDirection.current
     Surface(

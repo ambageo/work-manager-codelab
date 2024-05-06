@@ -17,21 +17,20 @@
 package com.example.bluromatic.ui
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.bluromatic.BluromaticApplication
 import com.example.bluromatic.data.BlurAmountData
 import com.example.bluromatic.data.BluromaticRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
 /**
  * [BlurViewModel] starts and stops the WorkManger and applies blur to the image. Also updates the
  * visibility states of the buttons depending on the states of the WorkManger.
  */
-class BlurViewModel(private val bluromaticRepository: BluromaticRepository) : ViewModel() {
+@HiltViewModel
+class BlurViewModel @Inject constructor(private val bluromaticRepository: BluromaticRepository) :
+    ViewModel() {
 
     internal val blurAmount = BlurAmountData.blurAmount
 
@@ -46,20 +45,6 @@ class BlurViewModel(private val bluromaticRepository: BluromaticRepository) : Vi
         bluromaticRepository.applyBlur(blurLevel)
     }
 
-    /**
-     * Factory for [BlurViewModel] that takes [BluromaticRepository] as a dependency
-     */
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val bluromaticRepository =
-                    (this[APPLICATION_KEY] as BluromaticApplication).container.bluromaticRepository
-                BlurViewModel(
-                    bluromaticRepository = bluromaticRepository
-                )
-            }
-        }
-    }
 }
 
 sealed class BlurUiState {
