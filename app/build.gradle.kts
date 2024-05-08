@@ -84,7 +84,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:${rootProject.extra["lifecycle_version"]}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.extra["lifecycle_version"]}")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${rootProject.extra["lifecycle_version"]}")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
     // Make Hilt generate code in the androidTest folder
     //kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     // Hilt dependencies
