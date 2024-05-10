@@ -23,5 +23,5 @@ interface AppContainer {
 }
 
 class DefaultAppContainer(context: Context) : AppContainer {
-    override val bluromaticRepository = WorkManagerBluromaticRepository(context)
+    override val bluromaticRepository = WorkManagerBluromaticRepositoryImpl(context)
 }
