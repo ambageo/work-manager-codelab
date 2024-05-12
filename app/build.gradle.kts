@@ -89,7 +89,7 @@ dependencies {
     //kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     // Hilt dependencies
     implementation("com.google.dagger:hilt-android:${rootProject.extra["hilt_version"]}")
-    kapt("com.google.dagger:hilt-android-compiler:${rootProject.extra["hilt_version"]}")
+    kapt("com.google.dagger:hilt-compiler:${rootProject.extra["hilt_version"]}")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
