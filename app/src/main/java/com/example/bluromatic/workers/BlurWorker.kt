@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.core.net.toUri
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.example.bluromatic.DEFAULT_BLUR_LEVEL
 import com.example.bluromatic.DELAY_TIME_MILLIS
 import com.example.bluromatic.KEY_BLUR_LEVEL
@@ -49,11 +50,17 @@ class BlurWorker(private val context: Context, params: WorkerParameters) :
                /* val picture = BitmapFactory.decodeResource(
                     applicationContext.resources, R.drawable.android_cupcake
                 )*/
+
+                // Decode (read) the Uri to get the picture
                 val picture = BitmapFactory.decodeStream(resolver.openInputStream(resourceUri.toUri()))
                 val blurredPicture = blurBitmap(picture, blurLevel)
+
+                // Create a new Uri of the blurred picture and store it
                 val blurredUri = writeBitmapToFile(applicationContext, blurredPicture)
-                makeStatusNotification("Output is $blurredUri", applicationContext)
-                Result.success()
+
+                // Create an output data object to pass it to the result
+                val outputData = workDataOf(KEY_IMAGE_URI to blurredUri.toString())
+                Result.success(outputData)
             } catch (throwable: Throwable) {
                 Log.e(
                     TAG,
