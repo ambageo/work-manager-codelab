@@ -1,6 +1,5 @@
 package com.example.bluromatic.workers
 
-import android.content.ContentResolver
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Log
