@@ -1,11 +1,16 @@
 package com.example.bluromatic.workers
 
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.bluromatic.DEFAULT_BLUR_LEVEL
 import com.example.bluromatic.DELAY_TIME_MILLIS
+import com.example.bluromatic.KEY_BLUR_LEVEL
+import com.example.bluromatic.KEY_IMAGE_URI
 import com.example.bluromatic.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -16,6 +21,9 @@ private const val TAG = "BlurWorker"
 class BlurWorker(private val context: Context, params: WorkerParameters) :
     CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
+        val resourceUri = inputData.getString(KEY_IMAGE_URI)
+        val blurLevel = inputData.getInt(KEY_BLUR_LEVEL, DEFAULT_BLUR_LEVEL)
+
         makeStatusNotification(
             applicationContext.resources.getString(R.string.blurring_image),
             context
@@ -28,11 +36,21 @@ class BlurWorker(private val context: Context, params: WorkerParameters) :
             // adding a delay just to be able to see the different notifications.
             delay(DELAY_TIME_MILLIS)
 
+            require(!resourceUri.isNullOrBlank()){
+                val errorMessage = applicationContext.resources.getString(R.string.invalid_input_uri)
+                Log.e(TAG, errorMessage)
+                errorMessage
+            }
+            // We need a content resolver to read the contents pointed to by the Uri
+            val resolver = applicationContext.contentResolver
+
+
             try {
-                val picture = BitmapFactory.decodeResource(
+               /* val picture = BitmapFactory.decodeResource(
                     applicationContext.resources, R.drawable.android_cupcake
-                )
-                val blurredPicture = blurBitmap(picture, 1)
+                )*/
+                val picture = BitmapFactory.decodeStream(resolver.openInputStream(resourceUri.toUri()))
+                val blurredPicture = blurBitmap(picture, blurLevel)
                 val blurredUri = writeBitmapToFile(applicationContext, blurredPicture)
                 makeStatusNotification("Output is $blurredUri", applicationContext)
                 Result.success()
