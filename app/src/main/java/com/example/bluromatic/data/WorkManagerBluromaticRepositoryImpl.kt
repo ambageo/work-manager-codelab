@@ -19,6 +19,7 @@ package com.example.bluromatic.data
 import android.content.Context
 import android.net.Uri
 import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -26,6 +27,8 @@ import com.example.bluromatic.KEY_BLUR_LEVEL
 import com.example.bluromatic.KEY_IMAGE_URI
 import com.example.bluromatic.getImageUri
 import com.example.bluromatic.workers.BlurWorker
+import com.example.bluromatic.workers.CleanupWorker
+import com.example.bluromatic.workers.SaveImageToFileWorker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
@@ -42,14 +45,30 @@ class WorkManagerBluromaticRepositoryImpl @Inject constructor(context: Context) 
      * @param blurLevel The amount to blur the image
      */
     override fun applyBlur(blurLevel: Int) {
+        // Begin a chain of OneTimeWorkRequests, the first being to cleanup temporary images
+        // This is the same as calling OneTimeWorkRequestBuilder<CleanupWorker>().build()
+        var continuation = workManager.beginWith(OneTimeWorkRequest.from(CleanupWorker::class.java))
+
         // Create a WorkRequest to blur the image
         val blurBuilder = OneTimeWorkRequestBuilder<BlurWorker>()
 
         // Add the imageUri as input Data, so that we can pass whatever image we want
         // to the Worker
         blurBuilder.setInputData(createInputDataForWorkRequest(blurLevel, imageUri))
+
+        // Add the blur work request to the chain
+        continuation = continuation.then(blurBuilder.build())
+
+        // Add WorkRequest to save the image to the FileSystem
+        val saveImageBuilder = OneTimeWorkRequestBuilder<SaveImageToFileWorker>().build()
+
+        continuation = continuation.then(saveImageBuilder)
+
+        continuation.enqueue()
+
         // Start the work
-        workManager.enqueue(blurBuilder.build())
+        // No longer need this as it was for enqueueing only one Work
+        //workManager.enqueue(blurBuilder.build())
     }
 
     /**
